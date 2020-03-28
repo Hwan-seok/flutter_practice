@@ -1,41 +1,93 @@
-import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(Xylo());
+import 'story_brain.dart';
 
-class Xylo extends StatelessWidget {
-  void playSound(int number) {
-    final player = AudioCache();
-    player.play('note$number.wav');
-  }
+void main() => runApp(Destini());
 
-  Expanded span(int sNum, Color color) {
-    return Expanded(
-      child: FlatButton(
-        onPressed: () {
-          playSound(sNum);
-        },
-        color: color,
-      ),
-    );
-  }
-
-  @override
+class Destini extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            span(1, Colors.red),
-            span(2, Colors.blueGrey),
-            span(3, Colors.indigo),
-            span(4, Colors.lightGreenAccent),
-            span(5, Colors.green),
-            span(6, Colors.teal),
-            span(7, Colors.pinkAccent),
-          ],
+      theme: ThemeData.dark(),
+      home: StoryPage(),
+    );
+  }
+}
+
+StoryBrain storyBrain = new StoryBrain();
+
+class StoryPage extends StatefulWidget {
+  _StoryPageState createState() => _StoryPageState();
+}
+
+class _StoryPageState extends State<StoryPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('images/background.png'), fit: BoxFit.cover),
+        ),
+        padding: EdgeInsets.symmetric(vertical: 50.0, horizontal: 15.0),
+        constraints: BoxConstraints.expand(),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(
+                flex: 12,
+                child: Center(
+                  child: Text(
+                    storyBrain.getStory(),
+                    style: TextStyle(
+                      fontSize: 25.0,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: FlatButton(
+                  onPressed: () {
+                    //Choice 1 made by user.
+                    setState(() {
+                      storyBrain.nextStory(1);
+                    });
+                  },
+                  color: Colors.red,
+                  child: Text(
+                    storyBrain.getChoice1(),
+                    style: TextStyle(
+                      fontSize: 20.0,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Expanded(
+                flex: 2,
+                child: Visibility(
+                  visible: storyBrain.buttonShouldBeVisible(),
+                  child: FlatButton(
+                    onPressed: () {
+                      setState(() {
+                        storyBrain.nextStory(2);
+                      });
+                    },
+                    color: Colors.blue,
+                    child: Text(
+                      storyBrain.getChoice2(),
+                      style: TextStyle(
+                        fontSize: 20.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
